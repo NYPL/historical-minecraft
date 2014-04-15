@@ -1,8 +1,4 @@
-Includes code from Jack Twilley's TopoMC
-(http://www.mathuin.org/TopoMC/), which is made available under the
-MIT license:
-
-Copyright (c) 2013 Jack Twilley
+Copyright (c) 2013 NYPL Labs
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -21,4 +17,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+This project includes code from Jack Twilley's TopoMC
+(http://www.mathuin.org/TopoMC/), which is also made available under
+the MIT license.
 
