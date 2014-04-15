@@ -1,4 +1,42 @@
 #Historical Maps in Minecraft
+#a project by Paul Beaudoin and Leonard Richardson
+
+As fans of Minecraft, and fans of real-world maps, we took advantage
+of (the New York Public Library's huge collection of digitized
+maps)[http://www.nypl.org/node/80186] to experiment with converting a
+historical map to a Minecraft world.
+
+We chose to convert [this 1860 map of the Fort Washington
+area](http://digitalcollections.nypl.org/items/baa8b48a-d8d8-1066-e040-e00a180661dc)
+into a Minecraft world. It's a topographical map, which means we can
+convert it into a three-dimensional space. Most of its features are
+features commonly seen in Minecraft--fields, water, dirt and stone
+paths. Our experiment lets you virtually explore a nineteenth-century
+Manhattan, a space that no longer exists.
+
+We've generated two Minecraft versions of the Fort Washington
+map. (The first
+map)[https://github.com/NYPL/historical-minecraft/tree/master/fort-washington/maps/fort-washington%20map%201]
+is a simple creative-mode visualization of the historical map. (The
+second
+map)[https://github.com/NYPL/historical-minecraft/tree/master/fort-washington/maps/fort-washington%20game%201]
+turns historic Fort Washington into a Minecraft survival experience,
+with valuable resources scattered beneath the ground.
+
+Converting the map was a three-step process.
+
+ 1. Paul traced over the topographical lines on the historical map and
+    generated a bitmap image showing the estimated elevation at every
+    point on the map. This gave the maximum height (y-coordinate) for
+    every (x,z) coordinate in the Minecraft world.
+
+ 2. Paul then traced over the map's major features and generated a
+    second bitmap image that color-coded each pixel according to which
+    Minecraft block (dirt, grass, cobblestone, etc.) should be exposed
+    at that (x,z) coordinate in the Minecraft world.
+
+ 3. Leonard wrote a Python script that combines the two bitmap images
+    into a three-dimensional Minecraft world.
 
 ##I. Generating the Elevation TIFF
 
@@ -11,7 +49,7 @@ QGIS 2.2.0 ( http://qgis.org )
  - Activate GRASS plugin if not already activated 
 
 A map image to work from
- - We used a geo-rectified TIFF exported from http://maps.nypl.org/warper/maps/16089#Rectify_tab but any high rez scan of a map with elevation data and features will suffice.
+ - We used a geo-rectified TIFF exported from [this map](http://maps.nypl.org/warper/maps/16089#Rectify_tab) but any high rez scan of a map with elevation data and features will suffice.
 
 ###Process:
 
@@ -60,7 +98,9 @@ Project > Save as Image
 You may want to create a cropped version of the result to remove un-analyzed/messy edges
 
 ##II. Generating the Features TIFF
-The features tiff represents the roads, paths, stationary water bodies, running water bodies, and buildings of the map.
+
+The features tiff represents the roads, paths, stationary water
+bodies, running water bodies, and buildings of the map.
 
 ###Requirements
 
@@ -109,31 +149,53 @@ Ultimately imagemagick with +antialias worked for me. I gather that the success 
       SVG  SVG       rw+   Scalable Vector Graphics (XML 2.7.3)
      SVGZ  SVG       rw+   Compressed Scalable Vector Graphics (XML 2.7.3)
 
-# 
+# III. Building the world
+
+The [script for generating the
+worlds](https://github.com/NYPL/historical-minecraft/blob/master/fort-washington/generate_map.py)
+uses [PIL](http://www.pythonware.com/products/pil/) to load the TIFF
+bitmaps into memory, and
+[pymclevel](https://github.com/mcedit/pymclevel) to generate a
+Minecraft worlds, one block at a time. It's run successfully on both
+Mac OS X and Linux.
+
+The script starts by calculating how large the world needs to be. It
+scales down the elevation bitmap so that a height of 0 on the bitmap
+corresponds to a height of 12 on the Minecraft map. (This avoids
+problems with void fog.) It creates a wall of glass around the map
+area, then generates a pillar of stone at every (x,z) coordinate on
+the map. The height of each pillar is controlled by the elevation
+bitmap, and the block at the top of each pillar is controlled by the
+feature bitmap.
 
 #Related Links
 Various related projects and helpful docs.
 
 ##Related Projects
-###UK Minecraft Map 
-The UK Ordnance Survey generated a 5G minecraft map of the entire topography of the UK. I couldn't find more than vague process docs, unfortunately.
-
-http://www.ordnancesurvey.co.uk/innovate/developers/minecraft-map-britain.html
 
 ###TopoMC
-Impressive python library for generating Minecraft maps from USGS data.
 
-https://github.com/mathuin/TopoMC
+An [impressive Python library](https://github.com/mathuin/TopoMC) for
+generating Minecraft maps from USGS data. Our script uses code from
+TopoMC to build trees.
 
-###Fort Washington Map in NYPL Digital Collections
-The Fort Washington map used in this project is zoomable in NYPL Digital Collections:
+###UK Minecraft Map 
 
-http://digitalcollections.nypl.org/items/baa8b48a-d8d8-1066-e040-e00a180661dc
+The UK Ordnance Survey generated a [5G Minecraft map of the entire
+topography of the
+UK](http://www.ordnancesurvey.co.uk/innovate/developers/minecraft-map-britain.html). Unfortunately,
+we couldn't find detailed information about their process.
 
 ##Minecraft Map Resources
 
-###Minecraft Map Libraries
-http://minecraft.gamepedia.com/Development_resources#Libraries
+###pymclevel
+
+Our script requires this library: a [low-level Python
+library](https://github.com/mcedit/pymclevel) for manipulating
+Minecraft's [Anvil](http://minecraft.gamepedia.com/Anvil_file_format)
+file format. There are [libraries for many other
+languages](http://minecraft.gamepedia.com/Development_resources#Libraries)
+available.
 
 ###USGS Elevation TIFFS
 This tutorial was helpful for generating sample elevation tiffs representing contemporary USGS data. Note that the geo-tiffs downloaded may need to be opened in QGIS and exported as tiffs to normalize the levels (lest you just see a lot of black).
