@@ -165,11 +165,19 @@ scales down the elevation bitmap so that a height of 0 on the bitmap
 corresponds to a height of 12 on the Minecraft map. (This avoids
 problems with void fog.)
 
-Then, the script generates enough chunksto hold the map. It creates a
-wall of glass around the map area. It then generates a pillar of stone
-at every (x,z) coordinate covered by the map. The height of each
-pillar is controlled by the elevation bitmap, and the block at the top
-of each pillar is controlled by the feature bitmap.
+Then, the script generates the world and enough chunks to hold the
+map. It creates a wall of glass around the map area. It then generates
+a pillar of stone at every (x,z) coordinate covered by the map. The
+height of each pillar is controlled by the elevation bitmap, and the
+block at the top of each pillar is controlled by the feature bitmap.
+
+The world is a "superflat"-type world whose terrain consists entirely
+of air blocks. This ensures that venturing outside the glass-encosed
+map area will not cause Minecraft to generate new terrain.
+
+To avoid discolored grass, the biome of every (x,z) coordinate on the
+map is set to Plains (for a survival-mode map) or to Ocean (for a
+creative-mode map).
 
 #Related Links
 Various related projects and helpful docs.
