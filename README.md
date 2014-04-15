@@ -24,6 +24,8 @@ map](https://github.com/NYPL/historical-minecraft/tree/master/fort-washington/ma
 turns historic Fort Washington into a Minecraft survival experience,
 with valuable resources scattered beneath the ground.
 
+[<img src="img/rectified-map-ref-thumb.png"/>](img/rectified-map-ref.png)
+
 Converting the map was a three-step process.
 
  1. Paul traced over the topographical lines on the historical map and
@@ -31,21 +33,23 @@ Converting the map was a three-step process.
     point on the map. This gave the maximum height (y-coordinate) for
     every (x,z) coordinate in the Minecraft world.
 
+[<img src="img/elevation-thumb.png"/>](img/elevation.png)
+
  2. Paul then traced over the map's major features and generated a
     second bitmap image that color-coded each pixel according to which
     Minecraft block (dirt, grass, cobblestone, etc.) should be exposed
     at that (x,z) coordinate in the Minecraft world.
 
+[<img src="img/features-thumb.png"/>](img/features.png)
+
  3. Leonard wrote a Python script that combines the two bitmap images
     into a three-dimensional Minecraft world.
+
+[<img src="img/in-game-thumb.png"/>](img/in-game.png)
 
 ##I. Generating the Elevation TIFF
 
 The elevation tiff is a black & white bitmap representing the elevation at each pixel of the map as a value from pure black (0 elevation) to pure white (highest elevation)
-
-[<img src="img/rectified-map-ref-thumb.png"/>](img/rectified-map-ref.png)
-[<img src="img/elevation-thumb.png"/>](img/elevation.png)
-[<img src="img/features-thumb.png"/>](img/features.png)
 
 ###Requirements
 
