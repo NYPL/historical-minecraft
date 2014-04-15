@@ -1,9 +1,10 @@
 #Historical Maps in Minecraft
-##a project by Paul Beaudoin and Leonard Richardson
+
+*a project by Paul Beaudoin and Leonard Richardson*
 
 As fans of Minecraft, and fans of real-world maps, we took advantage
-of (the New York Public Library's huge collection of digitized
-maps)[http://www.nypl.org/node/80186] to experiment with converting a
+of [the New York Public Library's huge collection of digitized
+maps](http://www.nypl.org/node/80186) to experiment with converting a
 historical map to a Minecraft world.
 
 We chose to convert [this 1860 map of the Fort Washington
@@ -15,11 +16,11 @@ paths. Our experiment lets you virtually explore a nineteenth-century
 Manhattan, a space that no longer exists.
 
 We've generated two Minecraft versions of the Fort Washington
-map. (The first
-map)[https://github.com/NYPL/historical-minecraft/tree/master/fort-washington/maps/fort-washington%20map%201]
-is a simple creative-mode visualization of the historical map. (The
+map. [The first
+map](https://github.com/NYPL/historical-minecraft/tree/master/fort-washington/maps/fort-washington%20map%201)
+is a simple creative-mode visualization of the historical map. [The
 second
-map)[https://github.com/NYPL/historical-minecraft/tree/master/fort-washington/maps/fort-washington%20game%201]
+map](https://github.com/NYPL/historical-minecraft/tree/master/fort-washington/maps/fort-washington%20game%201)
 turns historic Fort Washington into a Minecraft survival experience,
 with valuable resources scattered beneath the ground.
 
@@ -162,11 +163,13 @@ Mac OS X and Linux.
 The script starts by calculating how large the world needs to be. It
 scales down the elevation bitmap so that a height of 0 on the bitmap
 corresponds to a height of 12 on the Minecraft map. (This avoids
-problems with void fog.) It creates a wall of glass around the map
-area, then generates a pillar of stone at every (x,z) coordinate on
-the map. The height of each pillar is controlled by the elevation
-bitmap, and the block at the top of each pillar is controlled by the
-feature bitmap.
+problems with void fog.)
+
+Then, the script generates enough chunksto hold the map. It creates a
+wall of glass around the map area. It then generates a pillar of stone
+at every (x,z) coordinate covered by the map. The height of each
+pillar is controlled by the elevation bitmap, and the block at the top
+of each pillar is controlled by the feature bitmap.
 
 #Related Links
 Various related projects and helpful docs.
