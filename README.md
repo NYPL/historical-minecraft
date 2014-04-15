@@ -1,5 +1,5 @@
 #Historical Maps in Minecraft
-#a project by Paul Beaudoin and Leonard Richardson
+##a project by Paul Beaudoin and Leonard Richardson
 
 As fans of Minecraft, and fans of real-world maps, we took advantage
 of (the New York Public Library's huge collection of digitized
