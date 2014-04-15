@@ -49,6 +49,8 @@ Converting the map was a three-step process.
 
 ##I. Generating the Elevation TIFF
 
+[<img src="img/elevation-thumb.png"/>](img/elevation.png)
+
 The elevation tiff is a black & white bitmap representing the elevation at each pixel of the map as a value from pure black (0 elevation) to pure white (highest elevation)
 
 ###Requirements
@@ -108,6 +110,8 @@ You may want to create a cropped version of the result to remove un-analyzed/mes
 
 ##II. Generating the Features TIFF
 
+[<img src="img/features-thumb.png"/>](img/features.png)
+
 The features tiff represents the roads, paths, stationary water
 bodies, running water bodies, and buildings of the map.
 
@@ -159,6 +163,8 @@ Ultimately imagemagick with +antialias worked for me. I gather that the success 
      SVGZ  SVG       rw+   Compressed Scalable Vector Graphics (XML 2.7.3)
 
 # III. Building the world
+
+[<img src="img/in-game-thumb.png"/>](img/in-game.png)
 
 The [script for generating the
 worlds](https://github.com/NYPL/historical-minecraft/blob/master/fort-washington/generate_map.py)
