@@ -33,19 +33,19 @@ Converting the map was a three-step process.
     point on the map. This gave the maximum height (y-coordinate) for
     every (x,z) coordinate in the Minecraft world.
 
-[<img src="img/elevation-thumb.png"/>](img/elevation.png)
+    [<img src="img/elevation-thumb.png"/>](img/elevation.png)
 
  2. Paul then traced over the map's major features and generated a
     second bitmap image that color-coded each pixel according to which
     Minecraft block (dirt, grass, cobblestone, etc.) should be exposed
     at that (x,z) coordinate in the Minecraft world.
 
-[<img src="img/features-thumb.png"/>](img/features.png)
+    [<img src="img/features-thumb.png"/>](img/features.png)
 
  3. Leonard wrote a Python script that combines the two bitmap images
     into a three-dimensional Minecraft world.
 
-[<img src="img/in-game-thumb.png"/>](img/in-game.png)
+    [<img src="img/in-game-thumb.png"/>](img/in-game.png)
 
 ##I. Generating the Elevation TIFF
 
