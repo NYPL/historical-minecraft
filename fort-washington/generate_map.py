@@ -184,17 +184,12 @@ peak = [10, 255, 10]
 print "Creating chunks."
 
 x_extent = len(elevation)
-#leftover = 16-(x_extent % 16)
-#x_extent += leftover
-
 x_min = 0
 x_max = len(elevation)
 
 z_min = 0
 z_extent = len(elevation[0])
 z_max = z_extent
-#leftover = 16-(z_extent % 16)
-#z_extent += leftover
 
 extra_space = 1
 
@@ -206,14 +201,7 @@ glass_bottom_left[1] += 1
 glass_upper_right = [x_extent + extra_space+1, 255, z_extent + extra_space+1]
 
 air_bottom_left = (0,y_min,0)
-#air_upper_right = (len(elevation), 255, len(elevation[0]))
 air_upper_right = [x_extent, 255, z_extent]
-
-# Bedrock on the bottom
-#print "Putting down bedrock level: %r %r" % (bedrock_bottom_left, bedrock_upper_right)
-#tilebox = box.BoundingBox(bedrock_bottom_left, bedrock_upper_right)
-#chunks = world.createChunksInBox(tilebox)
-#world.fillBlocks(tilebox, m.Bedrock)
 
 # Glass walls
 wall_material = m.Glass
