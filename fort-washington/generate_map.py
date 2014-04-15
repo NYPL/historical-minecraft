@@ -4,7 +4,6 @@ import sys
 from PIL import Image
 from pymclevel import mclevel, box, materials, nbt
 from pymclevel.materials import alphaMaterials as m
-from pymclevel.mclevelbase import TileEntities
 
 import random
 
@@ -48,19 +47,24 @@ block_id_lookup = {
     220 : (m.Water.ID, 0, 1),
 }
 
-TREE_CHANCE = 0.001
-TALL_GRASS_CHANCE = 0.003
-FLOWER_CHANCE = 0.0035
+plant_chance = {
+    m.Watermelon.ID : 0.00001,
+    m.Pumpkin.ID : 0.00001,
+    m.SugarCane.ID : 0.0005,
+    "tree" : 0.001,
+    m.TallGrass.ID : 0.003,
+    "flower" : 0.0035,
+}
 
 def random_material():
     """Materials to be hidden underground to help survival play."""
 
     stone_chance = 0.90
-    very_common = [m.Gravel, m.Sand, m.Sand, m.Clay]
-    common = [m.CoalOre, m.IronOre, m.MossStone]
-    uncommon = [m.Obsidian, m.RedstoneOre, m.LapisLazuliOre, m.GoldOre, 129]
+    very_common = [m.Sand, m.Cobblestone, m.CoalOre, m.IronOre]
+    common = [m.Clay, m.Obsidian, m.Gravel, m.MossStone, m.Dirt]
+    uncommon = [m.RedstoneOre, m.LapisLazuliOre, m.GoldOre, 129]
     rare = [ m.Glowstone, m.DiamondOre, m.BlockofIron, m.TNT,
-             m.LapisLazuliBlock]
+             m.BlockofGold, m.LapisLazuliBlock]
 
     x = random.random()
     choice = None
@@ -166,7 +170,7 @@ def setspawnandsave(world, point):
 i = 0
 worlddir = None
 while not worlddir or os.path.exists(worlddir):
-    i += 1 
+    i += 1
     name = filename_prefix + " " + map_type + " " + str(i)
     worlddir = os.path.join(minecraft_save_dir, name)
 
@@ -258,26 +262,32 @@ for x, row in enumerate(elevation):
         # In game mode, sprinkle some semi-realistic outdoor features
         # onto the grass.
         if map_type == "game" and block_id == m.Grass.ID:
-            choice = random.random()
-            if choice < TREE_CHANCE:
-                # Plant a TopoMC tree here.
-                tree_type = random.choice([2,4,5,5])
-                # print "Planting a tree at (%s,%s,%s)" % (x, elev+1, z)
-                (blocks, block_data) = treeObjs[tree_type]((x,elev+1,z))
-                [world.setBlockAt(tx, ty, tz, materialNamed(block)) for (tx, ty, tz, block) in blocks if block != 'Air' and tx >= x_min and tz >= z_min and tx <= x_max and tz <= z_max]
-                [world.setBlockDataAt(tx, ty, tz, bdata) for (tx, ty, tz, bdata) in block_data if bdata != 0 and tx >= x_min and tz >= z_min and tx <= x_max and tz <= z_max]
-            elif choice < TALL_GRASS_CHANCE:
-                # Plant grass.
-                world.setBlockAt(x, elev+1,z, m.TallGrass.ID)
-                world.setBlockDataAt(x, elev+1,z, 1)
-
-            elif choice < FLOWER_CHANCE:
-                # Plant a flower, nothing too fancy.
-                id, data = random.choice(
-                    [(37,None), (38,None), (38,3), (38,8)])
-                world.setBlockAt(x, elev+1,z, id)
-                if data:
-                    world.setBlockDataAt(x, elev+1,z, data)
+            for plant, probability in plant_chance.items():
+                choice = random.random()
+                if choice < probability:
+                    if plant == 'tree':
+                        # Plant a TopoMC tree here.
+                        tree_type = random.choice([2,4,5,5])
+                        # print "Planting a tree at (%s,%s,%s)" % (x, elev+1, z)
+                        (blocks, block_data) = treeObjs[tree_type]((x,elev+1,z))
+                        [world.setBlockAt(tx, ty, tz, materialNamed(block)) for (tx, ty, tz, block) in blocks if block != 'Air' and tx >= x_min and tz >= z_min and tx <= x_max and tz <= z_max]
+                        [world.setBlockDataAt(tx, ty, tz, bdata) for (tx, ty, tz, bdata) in block_data if bdata != 0 and tx >= x_min and tz >= z_min and tx <= x_max and tz <= z_max]
+                    elif plant == 'flower':
+                        # Plant a flower, nothing too fancy.
+                        id, data = random.choice(
+                            [(37,None), (38,None), (38,3), (38,8)])
+                        world.setBlockAt(x, elev+1,z, id)
+                        if data:
+                            world.setBlockDataAt(x, elev+1,z, data)
+                    elif plant == m.SugarCane.ID:
+                        # Must be next to water
+                        for water_x in (x-1, x+1):
+                            for water_z in (z-1, z+1):
+                                data = world.getBlockAt(water_x, y, water_z)
+                                import pdb; pdb.set_trace()
+                    else:
+                        world.setBlockAt(x, elev+1,z, plant)
+                    break
 
 # I can't quite get this to work. The chest shows up but the supplies
 # don't.
