@@ -43,6 +43,10 @@ Converting the map was a three-step process.
 
 The elevation tiff is a black & white bitmap representing the elevation at each pixel of the map as a value from pure black (0 elevation) to pure white (highest elevation)
 
+[<img src="img/rectified-map-ref-thumb.png"/>](img/rectified-map-ref.png)
+[<img src="img/elevation-thumb.png"/>](img/elevation.png)
+[<img src="img/features-thumb.png"/>](img/features.png)
+
 ###Requirements
 
 QGIS 2.2.0 ( http://qgis.org )
