@@ -7,7 +7,7 @@ from pymclevel.materials import alphaMaterials as m
 
 import random
 
-from tree import Tree, treeObjs, materialNamed
+from tree import Tree, treeObjs
 
 minecraft_save_dir = "."
 # On Mac OS X:
@@ -19,7 +19,7 @@ map_type = None
 if len(sys.argv) > 1:
     map_type = sys.argv[1]
     if map_type == 'game':
-        game_mode = 0 # Survival
+        game_mode = 1 # 0 Survival
     else:
         game_mode = 1 # Creative
 
@@ -50,7 +50,7 @@ block_id_lookup = {
 plant_chance = {
     m.Watermelon.ID : 0.00001,
     m.Pumpkin.ID : 0.00001,
-    m.SugarCane.ID : 0.0005,
+    m.SugarCane.ID : 0.01,
     "tree" : 0.001,
     m.TallGrass.ID : 0.003,
     "flower" : 0.0035,
@@ -60,11 +60,13 @@ def random_material():
     """Materials to be hidden underground to help survival play."""
 
     stone_chance = 0.90
-    very_common = [m.Sand, m.Cobblestone, m.CoalOre, m.IronOre]
+    very_common = [m.Sand, m.Cobblestone, m.CoalOre, m.IronOre,
+                   m.MonsterSpawner]
     common = [m.Clay, m.Obsidian, m.Gravel, m.MossStone, m.Dirt]
     uncommon = [m.RedstoneOre, m.LapisLazuliOre, m.GoldOre, 129]
     rare = [ m.Glowstone, m.DiamondOre, m.BlockofIron, m.TNT,
              m.BlockofGold, m.LapisLazuliBlock]
+    very_rare = [ m.BlockofDiamond, m.MonsterSpawner]
 
     x = random.random()
     choice = None
@@ -77,8 +79,10 @@ def random_material():
         l = common
     elif x < 0.998:
         l = uncommon
-    else:
+    elif x < 0.9995:
         l = rare
+    else:
+        l = very_rare
     if l is not None:
         choice = random.choice(l)
     if not isinstance(choice, int):
@@ -88,7 +92,7 @@ def random_material():
 # Set these values to only render part of the map, either by
 # offsetting the origin or displaying a smaller size.
 x_offset = 0
-truncate_size = None
+truncate_size = 32
 
 elevation_min = 255
 elevation_max = 0
@@ -247,6 +251,45 @@ for x, row in enumerate(elevation):
             else:
                 block = random_material()
             world.setBlockAt(x,elev,z, block)
+            if block == m.MonsterSpawner.ID:
+                mobSpawner = TAG_Compound()
+                mobSpawner["id"] = TAG_String(u'MobSpawner')
+                mobSpawner["MinSpawnDelay"] = TAG_Short(loopTicks)
+                mobSpawner["MaxSpawnDelay"] = TAG_Short(loopTicks)
+                mobSpawner["Delay"] = TAG_Short(0)
+                mobSpawner["SpawnCount"] = TAG_Short(1)
+                mobSpawner["RequiredPlayerRange"] = TAG_Short(1000)
+                mobSpawner["MaxNearbyEntities"] = TAG_Short(maxEntities)
+                mobSpawner["SpawnRange"] = TAG_Short(spawnRange)
+                mobSpawner["SpawnData"] = minecartSpawner(cartDelay, cartPos, tileInfo)
+                mobSpawner["EntityId"] = TAG_String(u'MinecartSpawner')
+                mobSpawner["x"] = TAG_Int(x)
+                mobSpawner["y"] = TAG_Int(y)
+                mobSpawner["z"] = TAG_Int(z)
+
+
+
+                mobSpawner = nbt.TAG_Compound()
+                mobSpawner["id"] = nbt.TAG_String(u'MobSpawner')
+                spawnPotentials = nbt.TAG_List()
+                spawnPotential = nbt.TAG_Compound()
+                spawnPotential["Weight"] = nbt.TAG_Int(1)
+                mob = random.choice(['Creeper', 'Skeleton', 'Zombie', 'Enderman', 'Witch'])
+                spawnPotential["Type"] = nbt.TAG_String(mob)
+                spawnPotentials.append(spawnPotential)
+                mobSpawner["SpawnPotentials"] = spawnPotentials
+                mobSpawner["EntityID"] = nbt.TAG_String(mob)
+
+                chunk = world.getChunk(x/16, z/16)
+                if not 'TileEntities' in chunk.root_tag:
+                    tiles = nbt.TAG_List()
+                    chunk.root_tag['TileEntities'] = tiles
+                tiles = chunk.root_tag['TileEntities']
+                tiles.append(mobSpawner)
+                mobSpawner["x"] = nbt.TAG_Int(x)
+                mobSpawner["y"] = nbt.TAG_Int(y)
+                mobSpawner["z"] = nbt.TAG_Int(z)
+                print "%s spawner" % mob
 
         start_at = actual_y - depth
         stop_at = actual_y + 1
@@ -270,7 +313,7 @@ for x, row in enumerate(elevation):
                         tree_type = random.choice([2,4,5,5])
                         # print "Planting a tree at (%s,%s,%s)" % (x, elev+1, z)
                         (blocks, block_data) = treeObjs[tree_type]((x,elev+1,z))
-                        [world.setBlockAt(tx, ty, tz, materialNamed(block)) for (tx, ty, tz, block) in blocks if block != 'Air' and tx >= x_min and tz >= z_min and tx <= x_max and tz <= z_max]
+                        [world.setBlockAt(tx, ty, tz, block.ID) for (tx, ty, tz, block) in blocks if block != m.Air and tx >= x_min and tz >= z_min and tx <= x_max and tz <= z_max]
                         [world.setBlockDataAt(tx, ty, tz, bdata) for (tx, ty, tz, bdata) in block_data if bdata != 0 and tx >= x_min and tz >= z_min and tx <= x_max and tz <= z_max]
                     elif plant == 'flower':
                         # Plant a flower, nothing too fancy.
@@ -283,8 +326,11 @@ for x, row in enumerate(elevation):
                         # Must be next to water
                         for water_x in (x-1, x+1):
                             for water_z in (z-1, z+1):
-                                data = world.getBlockAt(water_x, y, water_z)
-                                import pdb; pdb.set_trace()
+                                data = world.blockAt(water_x, y, water_z)
+                                if data == m.Water.ID:
+                                    # Yay, we found water.
+                                    world.setBlockAt(x, elev+1, z, plant)
+                                    print "Yay, water at %s, %s, %s" % (x, elev+1,z)
                     else:
                         world.setBlockAt(x, elev+1,z, plant)
                     break

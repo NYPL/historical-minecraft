@@ -5,7 +5,7 @@ from math import hypot
 import numpy
 from random import randint
 from itertools import product
-from pymclevel.materials import alphaMaterials 
+from pymclevel.materials import alphaMaterials, Block
 
 # http://askawizard.blogspot.com/2008/09/decorators-python-saga-part-2_28.html
 
@@ -28,11 +28,6 @@ class Memoized(object):
         if args not in self.cache:
             self.cache[args] = self.function(*args)
         return self.cache[args]
-
-@memoize()
-def materialNamed(string):
-    "Returns block ID for block with name given in string."
-    return [v.ID for v in alphaMaterials.allBlocks if v.name == string][0]
 
 class Tree(object):
     """Each type of tree will be an instance of this class."""
@@ -59,11 +54,15 @@ class Tree(object):
         if self.pattern is not None:
             if isinstance(data, int):
                 self.data = data
+            elif isinstance(data, Block):
+                self.data = data.ID
             else:
                 raise AttributeError('leafy trees require integer values for data: %d' % data)
         else:
-            if isinstance(data, basestring):
+            if isinstance(data, int):
                 self.data = data
+            elif isinstance(data, Block):
+                self.data = data.ID
             else:
                 raise AttributeError('non-leafy trees require string values for data: %d' % data)
         # heights (max, min, trunk)
@@ -97,10 +96,10 @@ class Tree(object):
                 myleafy = leafbottom+leafy
                 myleafz = z+leafz-Tree.treeWidth
                 if self.pattern(leafx, leafy, leafz, leafheight-1):
-                    blocks.append((myleafx, myleafy, myleafz, 'Leaves'))
+                    blocks.append((myleafx, myleafy, myleafz, alphaMaterials.Leaves))
                     datas.append((myleafx, myleafy, myleafz, self.data))
             for y in xrange(base, base+height):
-                blocks.append((x, y, z, 'Wood'))
+                blocks.append((x, y, z, alphaMaterials.Wood))
                 datas.append((x, y, z, self.data))
         return blocks, datas
 
@@ -119,7 +118,7 @@ class Tree(object):
         else:
             # plant it now!
             (blocks, datas) = treeObjs[tree](coords)
-            [tile.world.setBlockAt(x, y, z, materialNamed(block)) for (x, y, z, block) in blocks if block != 'Air']
+            [tile.world.setBlockAt(x, y, z, block) for (x, y, z, block) in blocks if block != alphaMaterials.Air]
             [tile.world.setBlockDataAt(x, y, z, data) for (x, y, z, data) in datas if data != 0]
 
     @staticmethod
@@ -128,12 +127,13 @@ class Tree(object):
             coords = trees[tree]
             for coord in coords:
                 (blocks, datas) = treeobjs[tree](coord)
-                [world.setBlockAt(x, y, z, materialNamed(block)) for (x, y, z, block) in blocks if block != 'Air']
+                import pdb; pdb.set_trace()
+                [world.setBlockAt(x, y, z, block) for (x, y, z, block) in blocks if block != alphaMaterials.Air]
                 [world.setBlockDataAt(x, y, z, data) for (x, y, z, data) in datas if data != 0]
 
 treeObjs = [
-    Tree('Cactus', None, 'Cactus', [3, 3, 3]),
-    Tree('Sugar Cane', None, 'Sugar Cane', [3, 3, 3]),
+    Tree('Cactus', None, alphaMaterials.Cactus, [3, 3, 3]),
+    Tree('Sugar Cane', None, alphaMaterials.SugarCane, [3, 3, 3]),
     Tree('Regular', (lambda x, y, z, maxy: Tree.leafDistance[x, z] <= (maxy-y+2)*Tree.treeWidth/maxy), 0, [5, 7, 2]),
     Tree('Redwood', (lambda x, y, z, maxy: Tree.leafDistance[x, z] <= 0.75*((maxy-y+1) % (Tree.treeWidth+1)+1)), 1, [9, 11, 2]),
     Tree('Birch', (lambda x, y, z, maxy: Tree.leafDistance[x, z] <= 1.2*(min(y, maxy-y+1)+1)), 2, [7, 9, 2]),
