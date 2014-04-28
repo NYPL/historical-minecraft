@@ -60,13 +60,12 @@ def random_material():
     """Materials to be hidden underground to help survival play."""
 
     stone_chance = 0.90
-    very_common = [m.Sand, m.Cobblestone, m.CoalOre, m.IronOre,
-                   m.MonsterSpawner]
+    very_common = [m.Sand, m.Cobblestone, m.CoalOre, m.IronOre]
     common = [m.Clay, m.Obsidian, m.Gravel, m.MossStone, m.Dirt]
     uncommon = [m.RedstoneOre, m.LapisLazuliOre, m.GoldOre, 129]
     rare = [ m.Glowstone, m.DiamondOre, m.BlockofIron, m.TNT,
              m.BlockofGold, m.LapisLazuliBlock]
-    very_rare = [ m.BlockofDiamond, m.MonsterSpawner]
+    very_rare = [ m.BlockofDiamond ]
 
     x = random.random()
     choice = None
@@ -251,45 +250,6 @@ for x, row in enumerate(elevation):
             else:
                 block = random_material()
             world.setBlockAt(x,elev,z, block)
-            if block == m.MonsterSpawner.ID:
-                mobSpawner = TAG_Compound()
-                mobSpawner["id"] = TAG_String(u'MobSpawner')
-                mobSpawner["MinSpawnDelay"] = TAG_Short(loopTicks)
-                mobSpawner["MaxSpawnDelay"] = TAG_Short(loopTicks)
-                mobSpawner["Delay"] = TAG_Short(0)
-                mobSpawner["SpawnCount"] = TAG_Short(1)
-                mobSpawner["RequiredPlayerRange"] = TAG_Short(1000)
-                mobSpawner["MaxNearbyEntities"] = TAG_Short(maxEntities)
-                mobSpawner["SpawnRange"] = TAG_Short(spawnRange)
-                mobSpawner["SpawnData"] = minecartSpawner(cartDelay, cartPos, tileInfo)
-                mobSpawner["EntityId"] = TAG_String(u'MinecartSpawner')
-                mobSpawner["x"] = TAG_Int(x)
-                mobSpawner["y"] = TAG_Int(y)
-                mobSpawner["z"] = TAG_Int(z)
-
-
-
-                mobSpawner = nbt.TAG_Compound()
-                mobSpawner["id"] = nbt.TAG_String(u'MobSpawner')
-                spawnPotentials = nbt.TAG_List()
-                spawnPotential = nbt.TAG_Compound()
-                spawnPotential["Weight"] = nbt.TAG_Int(1)
-                mob = random.choice(['Creeper', 'Skeleton', 'Zombie', 'Enderman', 'Witch'])
-                spawnPotential["Type"] = nbt.TAG_String(mob)
-                spawnPotentials.append(spawnPotential)
-                mobSpawner["SpawnPotentials"] = spawnPotentials
-                mobSpawner["EntityID"] = nbt.TAG_String(mob)
-
-                chunk = world.getChunk(x/16, z/16)
-                if not 'TileEntities' in chunk.root_tag:
-                    tiles = nbt.TAG_List()
-                    chunk.root_tag['TileEntities'] = tiles
-                tiles = chunk.root_tag['TileEntities']
-                tiles.append(mobSpawner)
-                mobSpawner["x"] = nbt.TAG_Int(x)
-                mobSpawner["y"] = nbt.TAG_Int(y)
-                mobSpawner["z"] = nbt.TAG_Int(z)
-                print "%s spawner" % mob
 
         start_at = actual_y - depth
         stop_at = actual_y + 1
