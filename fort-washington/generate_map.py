@@ -19,7 +19,7 @@ map_type = None
 if len(sys.argv) > 1:
     map_type = sys.argv[1]
     if map_type == 'game':
-        game_mode = 1 # 0 Survival
+        game_mode = 0 # Survival
     else:
         game_mode = 1 # Creative
 
@@ -91,7 +91,7 @@ def random_material():
 # Set these values to only render part of the map, either by
 # offsetting the origin or displaying a smaller size.
 x_offset = 0
-truncate_size = 32
+truncate_size = 0
 
 elevation_min = 255
 elevation_max = 0
