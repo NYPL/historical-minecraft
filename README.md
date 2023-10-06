@@ -1,4 +1,4 @@
-#Historical Maps in Minecraft
+# Historical Maps in Minecraft
 
 *a project by Paul Beaudoin and Leonard Richardson*
 
@@ -47,13 +47,13 @@ Converting the map was a three-step process.
 
     [<img src="img/in-game-thumb.png"/>](img/in-game.png)
 
-##I. Generating the Elevation TIFF
+## I. Generating the Elevation TIFF
 
 [<img src="img/elevation-thumb.png"/>](img/elevation.png)
 
 The elevation tiff is a black & white bitmap representing the elevation at each pixel of the map as a value from pure black (0 elevation) to pure white (highest elevation)
 
-###Requirements
+### Requirements
 
 QGIS 2.2.0 ( http://qgis.org )
  - Activate Contour plugin
@@ -62,7 +62,7 @@ QGIS 2.2.0 ( http://qgis.org )
 A map image to work from
  - We used a geo-rectified TIFF exported from [this map](http://maps.nypl.org/warper/maps/16089#Rectify_tab) but any high rez scan of a map with elevation data and features will suffice.
 
-###Process:
+### Process:
 
 Layer > Add Raster Layer > [select rectified tiff]
  - Repeat for each tiff to be analyzed
@@ -108,18 +108,18 @@ Project > Save as Image
 
 You may want to create a cropped version of the result to remove un-analyzed/messy edges
 
-##II. Generating the Features TIFF
+## II. Generating the Features TIFF
 
 [<img src="img/features-thumb.png"/>](img/features.png)
 
 The features tiff represents the roads, paths, stationary water
 bodies, running water bodies, and buildings of the map.
 
-###Requirements
+### Requirements
 
 Inkscape & imagemagick
 
-###Process
+### Process
 In Inkscape, import the original rectified tiff and the elevation tiff as a reference, making sure one perfectly overlays the other. Import the cropped elevation tiff on top of that and make sure it perfectly matches up with the uncropped elevation tiff behind it. With the cropped elevation tiff selected, do File > Document Properties > Page > Custom Size > Resize page to drawing or selection. This will ensure that when you export from Inkscape, the result is exactly the same size and corresponds pixel-to-pixel with the elevation tiff.
 
 Depending on what features will be identified, set up separate layers for roads, paths, stationary water, streams, and buildings. Proceed to trace the features using the line/bezier tool. "Path > Stroke to path" is your friend when tracing creeks and paths with mostly regular widths. Placing features of similar type on independent layers makes it easier to mass assign colors by type. 
@@ -143,7 +143,7 @@ Save your SVG. Export to TIFF using imagemagick:
 
 This should produce a TIFF without anti-aliasing. (The -depth 8 flag converts it from 16 bit, which PIL can't read.) Open the image and zoom to an edge to confirm there are no intermediate color values. See below for rationale and troubleshooting. (If PIL complains when opening the tiff, you may need to open in GIMP and re-save.)
 
-####Anti-Aliasing Troubleshooting
+#### Anti-Aliasing Troubleshooting
 
 At writing, Inkscape isn't able to suppress anti-aliasing when exporting to raster. Whereas anti-aliasing is almost always a benefit, it's frustrating if you're trying to maintain specific R values. With anti-aliasing, pixels of intermediate value are created at the edges of shapes. For example, at the intersection of dirt and grass, a pixel with R value 15 was common (corresponding to half of 10 + 20). Leonard's python code was modified to round to the nearest accepted value when processing these edge values. Additionally the R values were reassigned to prevent, for example, blocks of water appearing at the intersection of road and grass (i.e. presume rounding errors will occur and ensure they're acceptable accidents).
 
@@ -193,27 +193,27 @@ To avoid discolored grass, the biome of every (x,z) coordinate on the
 map is set to Plains (for a survival-mode map) or to Ocean (for a
 creative-mode map).
 
-#Related Links
+# Related Links
 Various related projects and helpful docs.
 
-##Related Projects
+## Related Projects
 
-###TopoMC
+### TopoMC
 
 An [impressive Python library](https://github.com/mathuin/TopoMC) for
 generating Minecraft maps from USGS data. Our script uses code from
 TopoMC to build trees.
 
-###UK Minecraft Map 
+### UK Minecraft Map 
 
 The UK Ordnance Survey generated a [5G Minecraft map of the entire
 topography of the
 UK](http://www.ordnancesurvey.co.uk/innovate/developers/minecraft-map-britain.html). Unfortunately,
 we couldn't find detailed information about their process.
 
-##Minecraft Map Resources
+## Minecraft Map Resources
 
-###pymclevel
+### pymclevel
 
 Our script requires this library: a [low-level Python
 library](https://github.com/mcedit/pymclevel) for manipulating
@@ -222,25 +222,25 @@ file format. There are [libraries for many other
 languages](http://minecraft.gamepedia.com/Development_resources#Libraries)
 available.
 
-###USGS Elevation TIFFS
+### USGS Elevation TIFFS
 This tutorial was helpful for generating sample elevation tiffs representing contemporary USGS data. Note that the geo-tiffs downloaded may need to be opened in QGIS and exported as tiffs to normalize the levels (lest you just see a lot of black).
 
 http://www.qgistutorials.com/en/docs/working_with_terrain.html
 
 http://earthexplorer.usgs.gov/
 
-###Minecraft Type Ids
+### Minecraft Type Ids
 Useful for choosing resource type ids
 
 http://minecraft-ids.grahamedgecombe.com/
 
-##TIFF Generation
-###Contours From Points
+## TIFF Generation
+### Contours From Points
 This tutorial explains how to generate contour lines from point elevation samples
 
 http://www.gistutor.com/quantum-gis/19/55-how-to-generate-contours-using-point-data-in-quantum-gis-qgis.html
 
-###GRASS Tutorial
+### GRASS Tutorial
 Steps 1 and 2 from this tutorial informed GRASS usage
 
 http://linfiniti.com/2010/12/3d-visualisation-and-dem-creation-in-qgis-with-the-grass-plugin/
